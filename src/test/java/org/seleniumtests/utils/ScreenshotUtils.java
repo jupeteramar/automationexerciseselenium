@@ -4,7 +4,11 @@ import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
+import javax.imageio.ImageIO;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,7 +37,6 @@ public class ScreenshotUtils {
 
             byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
             Allure.addAttachment(screenshotName, new ByteArrayInputStream(screenshot));
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,4 +66,29 @@ public class ScreenshotUtils {
             e.printStackTrace();
         }
     }
+
+    public static void saveScrollShot(WebDriver driver, String testName) {
+        try {
+            String timestamp = new SimpleDateFormat("MMddyyyy_HHmm").format(new Date());
+            String screenshotName = testName + "_" + timestamp + ".png";
+
+            // Define storage path (screenshots folder inside project)
+            File destination = new File("screenshots/" + screenshotName);
+
+            // Ensure directory exists
+            destination.getParentFile().mkdirs();
+
+            // Take full-page scrollshot
+            Screenshot screenshot = new AShot()
+                    .shootingStrategy(ShootingStrategies.viewportPasting(100))
+                    .takeScreenshot(driver);
+
+            // Save image as PNG
+            ImageIO.write(screenshot.getImage(), "PNG", destination);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

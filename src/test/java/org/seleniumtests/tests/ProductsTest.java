@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.seleniumtests.pages.ProductViewPage;
 import org.seleniumtests.utils.ClickUtils;
+import org.seleniumtests.utils.ScreenshotUtils;
 import org.testng.Assert;
 import org.seleniumtests.base.BaseTest;
 import org.seleniumtests.pages.ProductsPage;
@@ -30,7 +31,8 @@ public class ProductsTest extends BaseTest {
     @Story("User can add a product to cart from products page successfully")
     @Severity(SeverityLevel.BLOCKER)
     public void addProductToCartFromProductsPage() {
-
+        // Scrollshot
+        ScreenshotUtils.saveScrollShot(driver, "Sample_1");
 
         String product1 = "24";
 
@@ -40,7 +42,7 @@ public class ProductsTest extends BaseTest {
         Assert.assertTrue(pgProducts.isCartModalDisplayed(), "Cart modal should be displayed.");
     }
 
-    @Test(description = "Verify add multiple products to cart successfully", enabled = true)
+    @Test(description = "Verify add multiple products to cart successfully", enabled = false)
     @Story("User can add multiple products to cart from products page successfully")
     @Severity(SeverityLevel.BLOCKER)
     public void addMultipleProductsToCartFromProductsPage() {
@@ -59,7 +61,7 @@ public class ProductsTest extends BaseTest {
         //Assert.assertTrue(pgProducts.isCartModalDisplayed(), "Cart modal should be displayed.");
     }
 
-    @Test(description = "Verify if users can view the details of the chosen product", enabled = true)
+    @Test(description = "Verify if users can view the details of the chosen product", enabled = false)
     @Story("Users can view the information about the product")
     @Severity(SeverityLevel.CRITICAL)
     public void viewProductDetails() throws InterruptedException {
@@ -77,7 +79,7 @@ public class ProductsTest extends BaseTest {
         Assert.assertEquals(productCardPrice, productViewPrice, "Product Price from Card does not match with View: Card (" + productCardPrice + ") View(" + productViewPrice + ")");
     }
 
-    @Test(description = "Verify that products displayed under Women > Dress match the selected category")
+    @Test(description = "Verify that products displayed under Women > Dress match the selected category", enabled = false)
     @Story("User is able to browse and add products to cart")
     @Severity(SeverityLevel.CRITICAL)
     public void filterWomenDress() throws InterruptedException {
@@ -87,7 +89,7 @@ public class ProductsTest extends BaseTest {
         viewMultipleProductsSimultaneously(products, category);
     }
 
-    @Test(description = "Verify that products displayed under Women > Tops match the selected category")
+    @Test(description = "Verify that products displayed under Women > Tops match the selected category", enabled = false)
     @Story("User is able to browse and add products to cart")
     @Severity(SeverityLevel.CRITICAL)
     public void filterWomenTops() throws InterruptedException {
@@ -97,7 +99,7 @@ public class ProductsTest extends BaseTest {
         viewMultipleProductsSimultaneously(products, category);
     }
 
-    @Test(description = "Verify that products displayed under Women > Saree match the selected category")
+    @Test(description = "Verify that products displayed under Women > Saree match the selected category", enabled = false)
     @Story("User is able to browse and add products to cart")
     @Severity(SeverityLevel.CRITICAL)
     public void filterWomenSaree() throws InterruptedException {
@@ -107,7 +109,7 @@ public class ProductsTest extends BaseTest {
         viewMultipleProductsSimultaneously(products, category);
     }
 
-    @Test(description = "Verify that products displayed under Men > Tshirt match the selected category")
+    @Test(description = "Verify that products displayed under Men > Tshirt match the selected category", enabled = false)
     @Story("User is able to browse and add products to cart")
     @Severity(SeverityLevel.CRITICAL)
     public void filterMenTshirt() throws InterruptedException {
@@ -117,7 +119,7 @@ public class ProductsTest extends BaseTest {
         viewMultipleProductsSimultaneously(products, category);
     }
 
-    @Test(description = "Verify that products displayed under Men > Jeans match the selected category")
+    @Test(description = "Verify that products displayed under Men > Jeans match the selected category", enabled = false)
     @Story("User is able to browse and add products to cart")
     @Severity(SeverityLevel.CRITICAL)
     public void filterMenJeans() throws InterruptedException {

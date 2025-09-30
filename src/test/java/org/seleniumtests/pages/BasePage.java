@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.seleniumtests.utils.ClickUtils;
+import org.seleniumtests.utils.WaitUtil;
 
 import java.time.Duration;
 
@@ -124,7 +125,7 @@ public abstract class BasePage {
 
     public boolean isUserNameDisplayed() {
         WebElement lblUsername = driver.findElement(lblUserName);
-
+        WaitUtil.waitForVisibility(driver, lblUserName, 5);
         boolean loggedIn = lblUsername.isDisplayed();
         return loggedIn;
     }

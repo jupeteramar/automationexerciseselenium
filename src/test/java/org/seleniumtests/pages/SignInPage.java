@@ -32,7 +32,7 @@ public class SignInPage extends BasePage{
     }
 
     public boolean isErrorMessageVisible(){
-        WaitUtil.waitForVisibility(driver, lblError, 10);
+        WaitUtil.waitForVisibility(driver, lblError, 5);
         List<WebElement> lblErrorMessage = driver.findElements(lblError);
         return lblErrorMessage.getFirst().isDisplayed();
     }
