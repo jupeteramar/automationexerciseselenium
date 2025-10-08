@@ -4,7 +4,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import  java.time.Duration;
+import java.time.Duration;
 
 public class ClickUtils {
 
@@ -18,7 +18,7 @@ public class ClickUtils {
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
 
             // Wait until it is clickable
-            wait.until(ExpectedConditions.elementToBeClickable(locator));
+            WaitUtil.waitForClickability(driver, locator, 5);
 
             // Highlight the element in red border
             redBorder(driver, element);
@@ -58,11 +58,10 @@ public class ClickUtils {
         }
     }
 
-    public static void redBorder(WebDriver driver, WebElement element){
+    public static void redBorder(WebDriver driver, WebElement element) {
         // Highlight the element in red border
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].style.border='5px solid red'", element);
-
     }
 
 }

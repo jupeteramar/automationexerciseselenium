@@ -3,6 +3,7 @@ package org.seleniumtests.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.seleniumtests.utils.ClickUtils;
 import org.seleniumtests.utils.WaitUtil;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class SignInPage extends BasePage{
     }
 
     public void clickLogInButton(){
-        driver.findElement(btnSubmitSignIn).click();
+        ClickUtils.safeClick(driver, btnSubmitSignIn, 5);
     }
 
 }

@@ -15,6 +15,7 @@ public class ProductViewPage extends BasePage {
     private final By lblProductPrice = By.cssSelector("div.product-information span span");
     public static final By inputQuantity = By.id("quantity");
     public static final By lblCategory = By.xpath("//div[@class='product-information']//p[1]");
+    public static final By lblBrand = By.xpath("//div[@class='product-information']//p[4]");
     private final By btnAddToCart = By.xpath("//div[@class='product-information']//span//button[@class='btn btn-default cart']");
 
     // Write Review Form
@@ -80,8 +81,18 @@ public class ProductViewPage extends BasePage {
         return driver.findElement(lblCategory).getText().trim();
     }
 
+    public String getBrandName(){
+        return driver.findElement(lblBrand).getText().trim();
+    }
+
     public boolean isCategoryMatched(String expected){
         return driver.findElement(lblCategory).getText().contains(expected);
     }
+
+    public boolean isBrandMatched(String expected){
+        return driver.findElement(lblBrand).getText().contains(expected);
+    }
+
+
 }
 

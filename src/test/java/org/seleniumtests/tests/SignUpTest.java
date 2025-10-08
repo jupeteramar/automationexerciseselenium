@@ -6,17 +6,15 @@ import org.seleniumtests.base.BaseTest;
 import org.seleniumtests.data.User;
 import org.seleniumtests.pages.SignInPage;
 import org.seleniumtests.pages.SignUpPage;
-import org.seleniumtests.utils.ScreenshotUtils;
-import org.seleniumtests.utils.WaitUtil;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.LocalDate;
+
 @Epic("Authentication")
 @Feature("Sign Up")
 public class SignUpTest extends BaseTest {
-    SignUpPage pgSignUp;
-    SignInPage pgSignIn;
 
     @BeforeMethod
     public void setUpPages() {
@@ -28,13 +26,8 @@ public class SignUpTest extends BaseTest {
     @Story("Users can successfully register an account by fulfilling required information")
     @Severity(SeverityLevel.BLOCKER)
     public void registerNewUser() throws InterruptedException {
-
-        preRegistration();
-
-        inputUserData();
-
+        userRegistration();
         pgSignUp.clickSubmit();
-
         Assert.assertTrue(pgSignUp.isSuccessRegistrationVisible(), "Nawp");
         Thread.sleep(5000);
 
@@ -46,10 +39,7 @@ public class SignUpTest extends BaseTest {
     @Story("Users cannot use an email that has been already used to register")
     @Severity(SeverityLevel.BLOCKER)
     public void registerUsedEmail() throws InterruptedException {
-        preRegistration();
-
-        inputUserData();
-
+        userRegistration();
         pgSignUp.clickSubmit();
 
         Assert.assertTrue(pgSignUp.isSuccessRegistrationVisible(), "Nawp");
@@ -151,7 +141,12 @@ public class SignUpTest extends BaseTest {
     @Story("Users cannot register with an empty field when filling out the user information")
     @Severity(SeverityLevel.BLOCKER)
     public void registerWithRequiredFields() throws InterruptedException {
-        preRegistration();
+        pgSignUp.goToSignupLogin();
+
+        // pre-Registration
+        pgSignUp.typeName(User.NAME);
+        pgSignUp.typeEmail(User.EMAIL);
+        pgSignUp.clickSignUpButton();
 
         pgSignUp.clearName2();
         pgSignUp.selectTitle(User.TITLE);
@@ -225,49 +220,95 @@ public class SignUpTest extends BaseTest {
         pgSignUp.typeMobileNumber(User.MOBILE_NUMBER);
     }
 
-    @Test(description = "Verify that the password field does not accept values shorter than 6 characters", enabled = false)
+    @Test(description = "Verify that the password field does not accept values shorter than 6 characters")
     @Story("Users cannot register with a password having less than 6 characters")
     @Severity(SeverityLevel.BLOCKER)
     public void registerShortPassword() throws InterruptedException {
+        String password = "1234";
+        int passwordCount = password.length();
+        preRegistration();
+        inputUserData();
+
+        pgSignUp.clearPassword();
+        pgSignUp.typePassword(password);
+
+        if (passwordCount < 6) {
+            System.out.println("Password: '" + password + "' is less than 6 characters");
+        }
+        Thread.sleep(4000);
+        pgSignUp.clickSubmit();
+
+        boolean registrationSuccessful = pgSignUp.isSuccessRegistrationVisible();
+
+        pgSignUp.clickContinueButton();
+        pgSignUp.deleteAccount();
+        Assert.assertTrue(!registrationSuccessful, "User is able to register with less than 6 characters");
+    }
+
+    @Test(description = "Verify that the Date of Birth dropdown includes the current year")
+    @Story("Users can choose the current year in birth year")
+    @Severity(SeverityLevel.BLOCKER)
+    public void registerCurrentYear() throws InterruptedException {
+        preRegistration();
+        inputUserData();
+
+        int currentYear = LocalDate.now().getYear();
+        System.out.println("Current Year: " + currentYear);
+        Assert.assertTrue(pgSignUp.isCurrentYearInOptions(currentYear), "The current year is not an option for birth year");
+    }
+
+    @Test(description = "Verify ensure that the Zip Code field only accepts valid numeric input and rejects letters or special characters.")
+    @Story("Users cannot input letters and special characters in Zip Code")
+    @Severity(SeverityLevel.BLOCKER)
+    public void registerInvalidZip() throws InterruptedException {
+        preRegistration();
+        inputUserData();
+
+        pgSignUp.clearZip();
+        pgSignUp.typeZip("abc1234#@");
+
+        Assert.assertTrue(isNumericOnly(pgSignUp.getZipText()), "Inputted ZIP code contains letters/special characters");
+    }
+
+    @Test(description = "Verify that the Mobile Number field rejects invalid input (letters and special characters)")
+    @Story("Users cannot input letters and special characters in Mobile Number")
+    @Severity(SeverityLevel.BLOCKER)
+    public void registerInvalidMobileNumber() throws InterruptedException {
+        preRegistration();
+        inputUserData();
+
+        pgSignUp.clearMobileNumber();
+        pgSignUp.typeMobileNumber("abc1234#@");
+
+        Assert.assertTrue(isNumericOnly(pgSignUp.getMobileNumberText()), "Inputted Mobile Number contains letters/special characters");
+    }
+
+    @Test(description = "Verify that the password field have a maximum length of 30")
+    @Story("Users cannot register with a password having more than 30 characters")
+    @Severity(SeverityLevel.BLOCKER)
+    public void registerMaximumPassword() throws InterruptedException {
+        String password = "abcdefghijklmnopqrstuvwxyz123#32";
+        int passwordCount = password.length();
         preRegistration();
 
-        pgSignUp.clickSignUpButton();
+        inputUserData();
 
-        String tooltip = pgSignUp.tooltipName();
-        System.out.println(tooltip);
+        pgSignUp.clearPassword();
+        pgSignUp.typePassword(password);
+        pgSignUp.clickSubmit();
+        boolean registrationWentThrough = pgSignUp.isSuccessRegistrationVisible();
+        pgSignUp.clickContinueButton();
+        pgSignUp.deleteAccount();
 
-        String expectedError = "Please fill out this field.";
-
-        Assert.assertTrue(tooltip.contains(expectedError));
-        Thread.sleep(1500);
+        Assert.assertFalse(registrationWentThrough, "The password exceeded 30 characters");
     }
 
-    public void preRegistration() {
-        pgSignUp.goToSignupLogin();
+    // ------------------------------------------------------------------
 
-        pgSignUp.typeName(User.NAME);
-        pgSignUp.typeEmail(User.EMAIL);
-
-        pgSignUp.clickSignUpButton();
+    public boolean isNumericOnly(String input) {
+        return input != null && input.matches("\\d+");
     }
 
-    public void inputUserData() {
-        pgSignUp.selectTitle(User.TITLE);
-        pgSignUp.typePassword(User.PASSWORD);
-        pgSignUp.selectDay(User.DAY);
-        pgSignUp.selectMonth(User.MONTH);
-        pgSignUp.selectYear(User.YEAR);
-        pgSignUp.checkPromotions(User.NEWSLETTER, User.OFFERS);
-        pgSignUp.typeFirstName(User.FIRST_NAME);
-        pgSignUp.typeLastName(User.LAST_NAME);
-        pgSignUp.typeCompany(User.COMPANY);
-        pgSignUp.typeAddress(User.ADDRESS);
-        pgSignUp.typeAddress2(User.ADDRESS2);
-        pgSignUp.selectCountry(User.COUNTRY);
-        pgSignUp.typeState(User.STATE);
-        pgSignUp.typeCity(User.CITY);
-        pgSignUp.typeZip(User.ZIP);
-        pgSignUp.typeMobileNumber(User.MOBILE_NUMBER);
-    }
+
 }
 

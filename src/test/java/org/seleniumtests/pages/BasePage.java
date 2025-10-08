@@ -1,6 +1,7 @@
 package org.seleniumtests.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -47,6 +48,18 @@ public abstract class BasePage {
     private final By lnkKidsDress = By.xpath("//div[@class='left-sidebar']//a[@href='/category_products/4']");
     private final By lnkKidsTopsShirts = By.xpath("//div[@class='left-sidebar']//a[@href='/category_products/5']");
 
+
+    // Brands
+    private final By lnkPolo = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Polo']");
+    private final By lnkHnM = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/H&M']");
+    private final By lnkMadame = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Madame']");
+    private final By lnkMastHarbour = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Mast & Harbour']");
+    private final By lnkBabyhug = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Babyhug']");
+    private final By lnkAllenSollyJunior = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Allen Solly Junior']");
+    private final By lnkKookieKids = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Kookie Kids']");
+    private final By lnkBiba = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Biba']");
+
+    //private final By lnkPolo = By.xpath("//div[@class='left-sidebar']//a[@href='/brand_products/Polo']");
 
     // Constructor
     public BasePage(WebDriver driver) {
@@ -164,4 +177,48 @@ public abstract class BasePage {
         ClickUtils.safeClick(driver, lnkKids, 10);
         ClickUtils.safeClick(driver, lnkKidsTopsShirts, 10);
     }
+
+    public void filterPolo(){
+        ClickUtils.safeClick(driver, lnkPolo, 10);
+    }
+
+    public void filterHnM(){
+        ClickUtils.safeClick(driver, lnkHnM, 10);
+    }
+
+    public void filterMadame(){
+        ClickUtils.safeClick(driver, lnkMadame, 10);
+    }
+
+    public void filterMastHarbour(){
+        ClickUtils.safeClick(driver, lnkMastHarbour, 10);
+    }
+
+    public void filterBabyhug(){
+        ClickUtils.safeClick(driver, lnkBabyhug, 10);
+    }
+
+    public void filterAllenSollyJunior(){
+        ClickUtils.safeClick(driver, lnkAllenSollyJunior, 10);
+    }
+
+    public void filterKookieKids(){
+        ClickUtils.safeClick(driver, lnkKookieKids, 10);
+    }
+
+    public void filterBiba(){
+        ClickUtils.safeClick(driver, lnkBiba, 10);
+    }
+
+    public static boolean isElementPresent(WebDriver driver, By locator, int timeoutInSeconds) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+            wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+
 }

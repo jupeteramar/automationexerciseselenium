@@ -7,6 +7,9 @@ import org.openqa.selenium.support.ui.Select;
 import org.seleniumtests.utils.ClickUtils;
 import org.seleniumtests.utils.WaitUtil;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class SignUpPage extends BasePage {
 
     public SignUpPage(WebDriver driver) {
@@ -74,9 +77,9 @@ public class SignUpPage extends BasePage {
     }
 
     public void selectTitle(String title) {
-        if (title.equals("Mr")) {
+        if (title.equals("Mr.")) {
             ClickUtils.safeClick(driver, radMr, 10);
-        } else if (title.equals("Mrs")) {
+        } else if (title.equals("Mrs.")) {
             ClickUtils.safeClick(driver, radMrs, 10);
         }
     }
@@ -87,6 +90,10 @@ public class SignUpPage extends BasePage {
 
     public void typeEmail2(String email2) {
         driver.findElement(txtEmail2).sendKeys(email2);
+    }
+
+    public void clearPassword(){
+        driver.findElement(txtPassword).clear();
     }
 
     public void typePassword(String password) {
@@ -161,13 +168,12 @@ public class SignUpPage extends BasePage {
     }
 
     public boolean isSuccessRegistrationVisible() {
-        boolean success = driver.findElement(lblSuccessRegistration).isDisplayed();
-        return success;
+        return driver.findElement(lblSuccessRegistration).isDisplayed();
     }
 
     public boolean isErrorUserAlreadyExistVisible() {
-        boolean error = driver.findElement(lblUserAlreadyExists).isDisplayed();
-        return error;
+        List<WebElement> errorVisible = driver.findElements(lblUserAlreadyExists);
+        return !errorVisible.isEmpty();
     }
 
     public void clickContinueButton() {
@@ -224,6 +230,30 @@ public class SignUpPage extends BasePage {
 
     public String tooltipName(){
         return driver.findElement(txtName).getAttribute("validationMessage");
+    }
+
+    public boolean isCurrentYearInOptions(int currentYear){
+        Select selectYear = new Select(driver.findElement(drpYear));
+        List<WebElement> options = selectYear.getOptions();
+
+        return options.stream()
+                .anyMatch(option -> option.getText().equals(String.valueOf(currentYear)));
+    }
+
+    public String getZipText(){
+        return driver.findElement(txtZip).getText().trim();
+    }
+
+    public String getMobileNumberText(){
+        return driver.findElement(txtMobileNumber).getText().trim();
+    }
+
+    public void clearZip(){
+        driver.findElement(txtZip).clear();
+    }
+
+    public void clearMobileNumber(){
+        driver.findElement(txtMobileNumber).clear();
     }
 }
 

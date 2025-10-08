@@ -1,10 +1,13 @@
 package org.seleniumtests.data;
 
-public class User {
-    public static final String NAME = "Glen Sturgis";
-    public static final String EMAIL = "glensturgis@cloud.nine.com";
-    public static final String PASSWORD = "P@ssw0rd123";
-    public static final String PASSWORD_SHORT = "pass";
+import com.github.javafaker.Faker;
+
+public class DynamicUser {
+    static Faker fakeUser = new Faker();
+
+    public static final String NAME = fakeUser.name().firstName();
+    public static final String EMAIL = fakeUser.internet().emailAddress();
+    public static final String PASSWORD = fakeUser.internet().password();
 
     public static final String TITLE = "Mr.";
 

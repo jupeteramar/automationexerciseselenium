@@ -3,7 +3,10 @@ package org.seleniumtests.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.seleniumtests.utils.ClickUtils;
 import org.testng.Assert;
+
+import java.util.List;
 
 public class CartPage extends BasePage {
 
@@ -11,12 +14,28 @@ public class CartPage extends BasePage {
         super(driver);
     }
 
+    private final By lblEmptyCart = By.id("empty_cart");
+
     private final By lblCartPageTitle = new By.ByCssSelector("div.breadcrumbs ol.breadcrumb li.active");
     private final By btnCheckOut = By.xpath("//section[@id='do_action']//a[@class='btn btn-default check_out']");
+    private final By btnDeleteProduct = By.xpath("//tc[@class='cart_delete']//a");
     private final By mdlCheckoutModal = By.id("checkoutModal");
+
+    public boolean isCartEmpty() {
+        return driver.findElement(lblEmptyCart).isDisplayed();
+    }
+
+    public boolean isCheckOutNotDisplayed() {
+        List<WebElement> checkOutButton = driver.findElements(btnCheckOut);
+        return checkOutButton.isEmpty();
+    }
 
     public String getCartPageTitle() {
         return driver.findElement(lblCartPageTitle).getText().trim();
+    }
+
+    public void deleteProductFromCart(String productId) {
+        ClickUtils.safeClick(driver, By.xpath("//td[@class='cart_delete']//a[@data-product-id='" + productId + "']"), 5);
     }
 
     public String getCartProductName(String productId) {
@@ -32,7 +51,7 @@ public class CartPage extends BasePage {
     }
 
     public int getBasePriceOfProductInCart(String productId) {
-// Step 1: Extract the text (e.g. "Rs. 400")
+        // Step 1: Extract the text (e.g. "Rs. 400")
         String priceText = driver.findElement(
                 By.xpath("//tr[@id='product-" + productId + "']//td[@class='cart_price']/p")
         ).getText().trim();
@@ -44,17 +63,26 @@ public class CartPage extends BasePage {
         return Integer.parseInt(numericPrice);
     }
 
-    public int getQuantityOfProductInCart(String productId){
+    public boolean isProductInCart(String productId) {
+        List<WebElement> productInCart = driver.findElements(By.id("product-" + productId));
+        return !productInCart.isEmpty();
+    }
+
+    public String getProductText(String productId) {
+        return driver.findElement(By.xpath("//tr[@id='product-" + productId + "']//td[@class='cart_description']//h4//a")).getText().trim();
+    }
+
+    public int getQuantityOfProductInCart(String productId) {
         String quantityText = driver.findElement(
-                By.xpath("//tr[@id='product-"+productId+"']//td[@class='cart_quantity']/button")
+                By.xpath("//tr[@id='product-" + productId + "']//td[@class='cart_quantity']/button")
         ).getText().trim();
 
         return Integer.parseInt(quantityText);
     }
 
-    public int getTotalPriceOfProductInCart(String productId){
+    public int getTotalPriceOfProductInCart(String productId) {
         String totalPriceText = driver.findElement(
-                By.xpath("//tr[@id='product-"+productId+"']//td[@class='cart_total']/p")
+                By.xpath("//tr[@id='product-" + productId + "']//td[@class='cart_total']/p")
         ).getText().trim();
 
         String totalPrice = totalPriceText.replace("Rs.", "").trim();
@@ -62,16 +90,16 @@ public class CartPage extends BasePage {
         return Integer.parseInt(totalPrice);
     }
 
-    public By getQuantityButton(String productId){
-        return By.xpath("//tr[@id='product-"+productId+"']/td[@class='cart_quantity']/button");
+    public By getQuantityButton(String productId) {
+        return By.xpath("//tr[@id='product-" + productId + "']/td[@class='cart_quantity']/button");
 
     }
 
-    public void clickQuantityButton(By locator){
+    public void clickQuantityButton(By locator) {
         driver.findElement(locator).click();
     }
 
-    public void clickCheckOutButton(){
+    public void clickCheckOutButton() {
         driver.findElement(btnCheckOut).click();
     }
 

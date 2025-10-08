@@ -4,10 +4,9 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import io.qameta.allure.Story;
-import org.openqa.selenium.WebElement;
 import org.seleniumtests.base.BaseTest;
-import org.seleniumtests.pages.CartPage;
-import org.seleniumtests.pages.ProductsPage;
+import org.seleniumtests.data.User;
+import org.seleniumtests.pages.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -15,13 +14,13 @@ import org.testng.annotations.Test;
 @Epic("Cart Management")
 public class CartTest extends BaseTest {
 
-    private ProductsPage pgProducts;
-    private CartPage pgCart;
-
     @BeforeMethod
     public void setUpPages() {
         pgProducts = new ProductsPage(driver);
+        pgSignIn = new SignInPage(driver);
+        pgSignUp = new SignUpPage(driver);
         pgCart = new CartPage(driver);
+        pgCheckout = new CheckoutPage(driver);
     }
 
     @Test(description = "Verify that the Modal's View Cart Button directs to the Cart Page")
@@ -35,6 +34,7 @@ public class CartTest extends BaseTest {
         pgProducts.clickViewCartFromModal();
         Assert.assertEquals(pgCart.getCartPageTitle(), "Shopping Cart", "Nope.");
     }
+
 
     @Test(description = "Verify the calculations of the cart after adding one product to cart")
     @Story("Users can add a product then view the accurate total and computations")
@@ -78,14 +78,6 @@ public class CartTest extends BaseTest {
             pgProducts.closeAddedToCartSuccessModal();
         }
 
-        // Add products to cart
-//        for (String product : products) {
-//            String productId = pgProducts.getProductIdByName(product);
-//
-//            pgProducts.clickAddProductToCart(productId);
-//            pgProducts.closeAddedToCartSuccessModal();
-//        }
-
         pgProducts.goToCart();
 
         // Assert (validate totals for each product)
@@ -127,4 +119,79 @@ public class CartTest extends BaseTest {
 
         pgCart.clickQuantityButton(pgCart.getQuantityButton(product1Id));
     }
+
+    @Test(description = "Verify if the checkout button is not displayed when cart is empty")
+    @Story("User cannot checkout the cart if it is empty")
+    @Severity(SeverityLevel.BLOCKER)
+    public void emptyCart() {
+        pgCart.goToCart();
+
+        Assert.assertTrue(pgCart.isCartEmpty());
+        Assert.assertTrue(pgCart.isCheckOutNotDisplayed());
+    }
+
+    @Test(description = "Verify if the checkout button is not displayed when cart is empty for newly registered user")
+    @Story("Registered User cannot checkout the cart if it is empty")
+    @Severity(SeverityLevel.BLOCKER)
+    public void emptyCartRegisteredUser() {
+        userAuthentication();
+        pgSignUp.clickSubmit();
+        pgCart.goToCart();
+
+        Assert.assertTrue(pgCart.isCartEmpty());
+        Assert.assertTrue(pgCart.isCheckOutNotDisplayed());
+        pgCart.deleteAccount();
+    }
+
+    @Test(description = "Verify if the checkout button is not displayed when cart is empty for a registered user")
+    @Story("Registered User can delete products to cart")
+    @Severity(SeverityLevel.BLOCKER)
+    public void deleteProductFromCart() {
+        String product1 = "24";
+        String email = "qa@tester.com";
+        String password = "12345";
+
+        userAuthentication();
+        pgSignUp.clickSubmit();
+
+        pgProducts.goToProducts();
+
+        pgProducts.clickAddProductToCart(product1);
+        pgProducts.clickViewCartFromModal();
+        pgCart.deleteProductFromCart(product1);
+        pgSignUp.deleteAccount();
+    }
+
+    @Test(description = "Verify that the products remain in the cart even after logging out")
+    @Story("Users can see the added product in the cart even after logging out")
+    @Severity(SeverityLevel.BLOCKER)
+    public void checkProductInCartAfterSignOut() {
+        String product1name = "Men Tshirt";
+
+        String product1Id = pgProducts.getProductIdByName(product1name);
+        userAuthentication();
+        pgSignUp.clickSubmit();
+        pgProducts.goToProducts();
+
+        pgProducts.clickAddProductToCart(product1Id);
+
+        pgProducts.clickViewCartFromModal();
+
+        Assert.assertTrue(pgCart.isProductInCart(product1Id), "Engk");
+
+        pgCart.logOut();
+
+        pgSignIn.typeSignInCredentials(User.EMAIL, User.PASSWORD);
+        pgSignIn.clickLogInButton();
+
+        pgCart.goToCart();
+
+        boolean isProductInCart = pgCart.isProductInCart(product1Id);
+        pgCart.deleteAccount();
+        Assert.assertTrue(isProductInCart, "Product is not in cart");
+    }
+
+
+
+
 }
