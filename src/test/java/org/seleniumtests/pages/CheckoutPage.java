@@ -2,10 +2,12 @@ package org.seleniumtests.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.seleniumtests.data.User;
 import org.seleniumtests.utils.ClickUtils;
 import org.seleniumtests.utils.WaitUtil;
 
+import java.util.List;
 import java.util.Map;
 
 public class CheckoutPage extends BasePage {
@@ -46,6 +48,9 @@ public class CheckoutPage extends BasePage {
     private final By txtExpiryYear = By.xpath("//input[@data-qa='expiry-year']");
     private final By btnPay = By.xpath("//button[@data-qa='pay-button']");
 
+    // Successful Order Placed
+    private final By lblSuccessOrderPlaced = By.xpath("//h2[@class='title text-center']");
+    private final By btnDownloadInvoice = By.xpath("//a[@class='btn btn-default check_out']");
 
     public boolean matchCheckoutDetails(String type) {
         WaitUtil.waitForVisibility(driver, By.id("address_delivery"), 10);
@@ -146,6 +151,10 @@ public class CheckoutPage extends BasePage {
         return driver.findElement(txtOrderComment).getAttribute("value");
     }
 
+    public String getName(){
+        return driver.findElement(txtName).getAttribute("value");
+    }
+
     public boolean getBreadcrumb(String breadcrumb){
         return driver.findElement(lblBreadcrumb).getText().equalsIgnoreCase(breadcrumb);
     }
@@ -175,7 +184,48 @@ public class CheckoutPage extends BasePage {
         driver.findElement(txtExpiryYear).sendKeys(expiryYear);
     }
 
-    public void clickPayButton(){
-        ClickUtils.safeClick(driver, btnPay, 10);
+    // Clear Card Details
+    public void clearName(){driver.findElement(txtName).clear();}
+
+    public void clearCardNumber(){driver.findElement(txtCardNumber).clear();}
+
+    public void clearCVC(){driver.findElement(txtCVC).clear();}
+
+    public void clearExpiryMonth(){driver.findElement(txtExpiryMonth).clear();}
+
+    public void clearExpiryYear(){driver.findElement(txtExpiryYear).clear();}
+
+    public void clickPayButton(){ClickUtils.safeClick(driver, btnPay, 10);}
+
+
+    // Tooltip Present?
+    public boolean tooltipName(){
+        return driver.findElement(txtName).getAttribute("validationMessage").equalsIgnoreCase("Please fill out this field.");
+    }
+
+    public boolean tooltipCardNumber(){
+        return driver.findElement(txtCardNumber).getAttribute("validationMessage").equalsIgnoreCase("Please fill out this field.");
+    }
+
+    public boolean tooltipCVC(){
+        return driver.findElement(txtCVC).getAttribute("validationMessage").equalsIgnoreCase("Please fill out this field.");
+    }
+
+    public boolean tooltipExpiryMonth(){
+        return driver.findElement(txtExpiryMonth).getAttribute("validationMessage").equalsIgnoreCase("Please fill out this field.");
+    }
+
+    public boolean tooltipExpiryYear(){
+        return driver.findElement(txtExpiryYear).getAttribute("validationMessage").equalsIgnoreCase("Please fill out this field.");
+    }
+
+    public boolean SuccessfulOrder() throws InterruptedException {
+        Thread.sleep(3000);
+        List<WebElement> successOrder = driver.findElements(lblSuccessOrderPlaced);
+        return !successOrder.isEmpty();
+    }
+
+    public void clickDownloadInvoice(){
+        ClickUtils.safeClick(driver, btnDownloadInvoice, 10);
     }
 }

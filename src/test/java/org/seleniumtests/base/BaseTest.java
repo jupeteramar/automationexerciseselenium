@@ -3,13 +3,19 @@ package org.seleniumtests.base;
 import io.qameta.allure.testng.AllureTestNg;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumtests.data.User;
 import org.seleniumtests.pages.*;
+import org.seleniumtests.utils.FileUtils;
 import org.seleniumtests.utils.TestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 @Listeners({AllureTestNg.class, TestListener.class})
 public class BaseTest {
@@ -31,20 +37,17 @@ public class BaseTest {
 
     @BeforeMethod
     public void SetUp() {
-        //System.setProperty("webdriver.chrome.driver", "C:/Selenium_data/chromedriver.exe");
         driver = new ChromeDriver();
-
-        // Browser Configuration
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
 
-        // Navigate to Home Page
+        // Open target web application
         driver.get("https://automationexercise.com/");
     }
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-
+        // Close the browser after each test
 
         if (driver != null) {
             driver.quit();

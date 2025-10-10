@@ -25,4 +25,9 @@ public class User {
     public static final String CITY = "St. Louis";
     public static final String ZIP = "12345";
     public static final String MOBILE_NUMBER = "+1234567890";
+
+    public static final String CARD_NUMBER = "4321231243255278";
+    public static final String CARD_CVC = "123";
+    public static final String CARD_EXPIRY_MONTH = "04";
+    public static final String CARD_EXPIRY_YEAR = "2029";
 }
